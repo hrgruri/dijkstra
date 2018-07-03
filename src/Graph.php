@@ -5,11 +5,13 @@ class Graph
 {
     private $nodes      = [];
     private $total_cost = 0;
-
-    public function __construct()
+    private $bidirectional = true;
+    
+    public function __construct($bidirectional = true)
     {
         $this->nodes      = [];
         $this->total_cost = 0;
+        $this->bidirectional = $bidirectional;
     }
 
     public static function create() : Graph
@@ -48,7 +50,10 @@ class Graph
         $distance = floatval($distance);
         $this->total_cost   += $distance;
         $this->nodes[$a][$b] = $distance;
-        $this->nodes[$b][$a] = $distance;
+        
+        if ($this->bidrectional) {
+            $this->nodes[$b][$a] = $distance;
+        }
         return $this;
     }
 
@@ -62,7 +67,10 @@ class Graph
     {
         if (isset($this->nodes[$a][$b])) {
             unset($this->nodes[$a][$b]);
-            unset($this->nodes[$b][$a]);
+            
+            if ($this->bidrectional) {
+                unset($this->nodes[$b][$a]);
+            }
         }
         return $this;
     }
