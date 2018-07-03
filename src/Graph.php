@@ -5,16 +5,18 @@ class Graph
 {
     private $nodes      = [];
     private $total_cost = 0;
+    private $bidirectional = true; 
 
-    public function __construct()
+    public function __construct($bidirectional = true)
     {
         $this->nodes      = [];
         $this->total_cost = 0;
+        $this->bidirectional = $bidirectional;
     }
 
-    public static function create() : Graph
+    public static function create($bidirectional = true) : Graph
     {
-        return new Graph();
+        return new Graph($bidirectional);
     }
 
     public static function loadCsv(string $filename) : Graph
@@ -48,7 +50,10 @@ class Graph
         $distance = floatval($distance);
         $this->total_cost   += $distance;
         $this->nodes[$a][$b] = $distance;
-        $this->nodes[$b][$a] = $distance;
+        
+        if($this->bidirectional) {
+            $this->nodes[$b][$a] = $distance;
+        }
         return $this;
     }
 
@@ -62,7 +67,10 @@ class Graph
     {
         if (isset($this->nodes[$a][$b])) {
             unset($this->nodes[$a][$b]);
-            unset($this->nodes[$b][$a]);
+            
+            if($this->bidirectional) {
+                unset($this->nodes[$b][$a]);
+            }
         }
         return $this;
     }
